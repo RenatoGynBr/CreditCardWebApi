@@ -1,11 +1,16 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations.Schema;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using System.ComponentModel.DataAnnotations.Schema;
 
 namespace CreditCardWebApi.Models
 {
+    public class RequestDTO
+    {
+        public int CustomerId { get; set; }
+        public string CardNumber { get; set; }
+
+        [Column(TypeName = "nvarchar(5)")]
+        public string CVV { get; set; }
+    }
+
     public class Request2DTO
     {
         public int CustomerId { get; set; }
@@ -15,4 +20,5 @@ namespace CreditCardWebApi.Models
         [Column(TypeName = "nvarchar(5)")]
         public string CVV { get; set; }
     }
+
 }

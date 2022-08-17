@@ -6,6 +6,10 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using CreditCardWebApi.Models;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
 
 namespace CreditCardWebApi.Controllers
 {
@@ -30,18 +34,36 @@ namespace CreditCardWebApi.Controllers
         }
 
         // GET: api/CreditCards/5
-        //[HttpGet("{id}")]
-        //public async Task<ActionResult<CreditCard>> GetCreditCard(int id)
-        //{
-        //    var creditCard = await _context.CreditCards.FindAsync(id);
+        [HttpGet("{id}")]
+        public async Task<ActionResult<CreditCard>> GetCreditCard(int id)
+        {
+            var creditCard = await _context.CreditCards.FindAsync(id);
 
-        //    if (creditCard == null)
-        //    {
-        //        return NotFound();
-        //    }
+            if (creditCard == null)
+            {
+                return NotFound();
+            }
 
-        //    return creditCard;
-        //}
+            return creditCard;
+        }
+
+
+        [HttpPost]
+        public async Task<ActionResult<CreditCard>> ReceiveCustomer(RequestDTO dto)
+        {
+            CreditCard creditCard = new CreditCard()
+            {
+                CustomerId = dto.CustomerId,
+                CardNumber = dto.CardNumber,
+                CVV = dto.CVV,
+                Token = GenerateToken(dto)
+            };
+            _context.CreditCards.Add(creditCard);
+            await _context.SaveChangesAsync();
+
+            return CreatedAtAction("GetCreditCard", new { id = creditCard.CardId }, creditCard);
+        }
+
 
         [HttpPost]
         public async Task<ActionResult<bool>> ValidateToken(Request2DTO dto)
@@ -93,16 +115,6 @@ namespace CreditCardWebApi.Controllers
         //    return NoContent();
         //}
 
-        // POST: api/CreditCards
-        //[HttpPost]
-        //public async Task<ActionResult<CreditCard>> PostCreditCard(CreditCard creditCard)
-        //{
-        //    _context.CreditCards.Add(creditCard);
-        //    await _context.SaveChangesAsync();
-
-        //    return CreatedAtAction("GetCreditCard", new { id = creditCard.CardId }, creditCard);
-        //}
-
         // DELETE: api/CreditCards/5
         //[HttpDelete("{id}")]
         //public async Task<IActionResult> DeleteCreditCard(int id)
@@ -123,5 +135,27 @@ namespace CreditCardWebApi.Controllers
         //{
         //    return _context.CreditCards.Any(e => e.CardId == id);
         //}
+
+        private string GenerateToken(RequestDTO dto)
+        {
+            var last4Digits = dto.CardNumber.Substring(dto.CardNumber.Length - 4, 4);
+            var _secretKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("CreditCard" + last4Digits + dto.CVV));
+            var _issuer = "https://localhost:5001";
+            var _audience = "https://localhost:5001";
+
+            var signinCredentials = new SigningCredentials(_secretKey, SecurityAlgorithms.HmacSha256);
+
+            var tokeOptions = new JwtSecurityToken(
+                issuer: _issuer,
+                audience: _audience,
+                claims: new List<Claim>(),
+                expires: DateTime.Now.AddMinutes(30),
+                signingCredentials: signinCredentials);
+
+            var tokenString = new JwtSecurityTokenHandler().WriteToken(tokeOptions);
+
+            //return $"Token = {tokenString}";
+            return $"{tokenString}";
+        }
     }
 }
