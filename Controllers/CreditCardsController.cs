@@ -9,7 +9,7 @@ using CreditCardWebApi.Models;
 
 namespace CreditCardWebApi.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/[controller]/[action]")]
     [ApiController]
     public class CreditCardsController : ControllerBase
     {
@@ -30,80 +30,98 @@ namespace CreditCardWebApi.Controllers
         }
 
         // GET: api/CreditCards/5
-        [HttpGet("{id}")]
-        public async Task<ActionResult<CreditCard>> GetCreditCard(int id)
+        //[HttpGet("{id}")]
+        //public async Task<ActionResult<CreditCard>> GetCreditCard(int id)
+        //{
+        //    var creditCard = await _context.CreditCards.FindAsync(id);
+
+        //    if (creditCard == null)
+        //    {
+        //        return NotFound();
+        //    }
+
+        //    return creditCard;
+        //}
+
+        [HttpPost]
+        public async Task<ActionResult<bool>> ValidateToken(Request2DTO dto)
         {
-            var creditCard = await _context.CreditCards.FindAsync(id);
+            var creditCard = await _context.CreditCards.FindAsync(dto.CardId);
 
             if (creditCard == null)
             {
-                return NotFound();
+                return false;
             }
 
-            return creditCard;
+            if (creditCard.Token != dto.Token ||
+                creditCard.CardId != dto.CardId ||
+                creditCard.CVV != dto.CVV)
+            {
+                return false;
+            }
+
+            return true;
         }
 
         // PUT: api/CreditCards/5
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPut("{id}")]
-        public async Task<IActionResult> PutCreditCard(int id, CreditCard creditCard)
-        {
-            if (id != creditCard.CardId)
-            {
-                return BadRequest();
-            }
+        //[HttpPut("{id}")]
+        //public async Task<IActionResult> PutCreditCard(int id, CreditCard creditCard)
+        //{
+        //    if (id != creditCard.CardId)
+        //    {
+        //        return BadRequest();
+        //    }
 
-            _context.Entry(creditCard).State = EntityState.Modified;
+        //    _context.Entry(creditCard).State = EntityState.Modified;
 
-            try
-            {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!CreditCardExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
-            }
+        //    try
+        //    {
+        //        await _context.SaveChangesAsync();
+        //    }
+        //    catch (DbUpdateConcurrencyException)
+        //    {
+        //        if (!CreditCardExists(id))
+        //        {
+        //            return NotFound();
+        //        }
+        //        else
+        //        {
+        //            throw;
+        //        }
+        //    }
 
-            return NoContent();
-        }
+        //    return NoContent();
+        //}
 
         // POST: api/CreditCards
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPost]
-        public async Task<ActionResult<CreditCard>> PostCreditCard(CreditCard creditCard)
-        {
-            _context.CreditCards.Add(creditCard);
-            await _context.SaveChangesAsync();
+        //[HttpPost]
+        //public async Task<ActionResult<CreditCard>> PostCreditCard(CreditCard creditCard)
+        //{
+        //    _context.CreditCards.Add(creditCard);
+        //    await _context.SaveChangesAsync();
 
-            return CreatedAtAction("GetCreditCard", new { id = creditCard.CardId }, creditCard);
-        }
+        //    return CreatedAtAction("GetCreditCard", new { id = creditCard.CardId }, creditCard);
+        //}
 
         // DELETE: api/CreditCards/5
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteCreditCard(int id)
-        {
-            var creditCard = await _context.CreditCards.FindAsync(id);
-            if (creditCard == null)
-            {
-                return NotFound();
-            }
+        //[HttpDelete("{id}")]
+        //public async Task<IActionResult> DeleteCreditCard(int id)
+        //{
+        //    var creditCard = await _context.CreditCards.FindAsync(id);
+        //    if (creditCard == null)
+        //    {
+        //        return NotFound();
+        //    }
 
-            _context.CreditCards.Remove(creditCard);
-            await _context.SaveChangesAsync();
+        //    _context.CreditCards.Remove(creditCard);
+        //    await _context.SaveChangesAsync();
 
-            return NoContent();
-        }
+        //    return NoContent();
+        //}
 
-        private bool CreditCardExists(int id)
-        {
-            return _context.CreditCards.Any(e => e.CardId == id);
-        }
+        //private bool CreditCardExists(int id)
+        //{
+        //    return _context.CreditCards.Any(e => e.CardId == id);
+        //}
     }
 }

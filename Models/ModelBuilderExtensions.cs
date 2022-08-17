@@ -10,18 +10,18 @@ namespace CreditCardWebApi.Models
     {
         public static void Seed(this ModelBuilder mb)
         {
-            mb.Entity<Customer>().HasData(
-                new Customer { CustomerId = 1, CustomerName = "Bill Gates" },
-                new Customer { CustomerId = 2, CustomerName = "Mark Zuckerberg" },
-                new Customer { CustomerId = 3, CustomerName = "Elon Musk" }
-                );
+            //mb.Entity<Customer>().HasData(
+            //    new Customer { CustomerId = 1, CustomerName = "Bill Gates" },
+            //    new Customer { CustomerId = 2, CustomerName = "Mark Zuckerberg" },
+            //    new Customer { CustomerId = 3, CustomerName = "Elon Musk" }
+            //    );
 
             mb.Entity<CreditCard>().HasData(
-                new CreditCard { CardId = 10, CustomerId = 1, NameOnCard = "Billy Gates III", CardNumber = "4242424242424242", ExpirationDate = "202912", SecurityCode = "123" },
-                new CreditCard { CardId = 11, CustomerId = 1, NameOnCard = "Billy Gates II", CardNumber = "1111222233334444", ExpirationDate = "202512", SecurityCode = "333" },
-                new CreditCard { CardId = 12, CustomerId = 1, NameOnCard = "Billy Gates I", CardNumber = "4444333322221111", ExpirationDate = "202612", SecurityCode = "444" },
-                new CreditCard { CardId = 20, CustomerId = 2, NameOnCard = "Mark Zuck", CardNumber = "7777888899991111", ExpirationDate = "202712", SecurityCode = "555" },
-                new CreditCard { CardId = 30, CustomerId = 3, NameOnCard = "EM", CardNumber = "9999888877776666", ExpirationDate = "202812", SecurityCode = "789" }
+                new CreditCard { CardId = 1, CustomerId = 1, CardNumber = "4242424242424242", CVV = "123", Token = "" },
+                new CreditCard { CardId = 2, CustomerId = 1, CardNumber = "1111222233334444", CVV = "222", Token = "" },
+                new CreditCard { CardId = 3, CustomerId = 1, CardNumber = "4444333322221111", CVV = "333", Token = "" },
+                new CreditCard { CardId = 4, CustomerId = 2, CardNumber = "7777888899991111", CVV = "444", Token = "" },
+                new CreditCard { CardId = 5, CustomerId = 3, CardNumber = "9999888877776666", CVV = "555", Token = "" }
                 );
         }
     }
